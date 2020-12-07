@@ -1,0 +1,28 @@
+# Build extra small Deno release
+
+name: xs-release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - id: deno
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: denoland/deno
+      - name: Download latest Deno source
+        uses: teddyking/dependency-action@master
+        with:
+          deps: https://github.com/denoland/deno/archive/${{ steps.deno.outputs.release }}.tar.gz
+      - name: Install latest Rust nightly
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: nightly
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --locked
