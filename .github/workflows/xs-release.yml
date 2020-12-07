@@ -9,14 +9,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - id: deno
-        uses: pozetroninc/github-action-get-latest-release@master
+      - uses: oprypin/find-latest-tag@v1
         with:
           repository: denoland/deno
-      - name: Download latest Deno source
-        uses: teddyking/dependency-action@master
+          releases-only: true
+        id: deno
+      - run: echo "Deno is at version ${{ steps.deno.outputs.tag }}"
+      - uses: actions/checkout@v2
         with:
-          deps: https://github.com/denoland/deno/archive/${{ steps.deno.outputs.release }}.tar.gz
+          repository: denoland/deno
+          ref: ${{ steps.deno.outputs.tag }}
       - name: Install latest Rust nightly
         uses: actions-rs/toolchain@v1
         with:
