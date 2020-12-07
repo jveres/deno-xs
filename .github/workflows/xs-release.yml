@@ -63,9 +63,19 @@ jobs:
       - name: Zip release
         working-directory: target/release
         run: zip -r deno-x86_64-unknown-linux-gnu.zip deno
-      - name: Upload release
+      - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: release
           path: |
             target/release/deno-x86_64-unknown-linux-gnu.zip
+      - name: Release ${{ steps.deno.outputs.tag }}
+        uses: ncipollo/release-action@v1
+        with:
+          tag: "${{ steps.deno.outputs.tag }}"
+          name: "${{ steps.deno.outputs.tag }}"
+          prerelease: ${{ steps.deno.outputs.tag == 'latest' }}
+          allowUpdates: true
+          replacesArtifacts: true
+          artifacts: "release/*"
+          token: ${{ secrets.GITHUB_TOKEN }}
