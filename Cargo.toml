@@ -1,5 +1,7 @@
 # Copyright 2018-2021 the Deno authors. All rights reserved. MIT license.
 
+cargo-features = ["strip"]
+
 [workspace]
 members = [
   "bench_util",
@@ -21,7 +23,6 @@ members = [
   "extensions/webstorage"
 ]
 exclude = ["test_util/std/hash/_wasm"]
-cargo-features = ["strip"]
 
 # NB: the `bench` and `release` profiles must remain EXACTLY the same.
 [profile.release]
