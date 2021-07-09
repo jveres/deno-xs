@@ -13,7 +13,6 @@ members = [
   "extensions/console",
   "extensions/crypto",
   "extensions/fetch",
-  "extensions/net",
   "extensions/timers",
   "extensions/url",
   "extensions/web",
