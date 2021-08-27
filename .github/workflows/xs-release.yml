@@ -1,13 +1,23 @@
 # Build extra small Deno release
 
-name: xs-release
+name: xs-release ${{matrix.os}}
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{matrix.os}}
+    timeout-minutes: 90
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+          - os: macos-10.15
+    env:
+      CARGO_TERM_COLOR: always
+      RUST_BACKTRACE: full
+      RUSTC_FORCE_INCREMENTAL: 1
     steps:
       - uses: oprypin/find-latest-tag@v1
         with:
@@ -34,15 +44,30 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release --locked
-      - name: Zip release
-        working-directory: target/release
-        run: zip -r deno-x86_64-unknown-linux-gnu.zip deno
-      - name: Upload build
+          args: --release --locked --all-targets
+      - name: Pre-release (linux)
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          cd target/release
+          zip -r deno-x86_64-unknown-linux-gnu.zip deno
+          ./deno types > lib.deno.d.ts
+      - name: Pre-release (mac)
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          cd target/release
+          zip -r deno-x86_64-apple-darwin.zip deno
+      - name: Upload linux build
+        if: startsWith(matrix.os, 'ubuntu')
         uses: actions/upload-artifact@v2
         with:
           name: release
           path: target/release/deno-x86_64-unknown-linux-gnu.zip
+      - name: Upload macOS build
+        if: startsWith(matrix.os, 'macos')
+        uses: actions/upload-artifact@v2
+        with:
+          name: release
+          path: target/release/deno-x86_64-apple-darwin.zip
       - name: Download build
         uses: actions/download-artifact@v2
       - name: Release ${{ steps.deno.outputs.tag }}
