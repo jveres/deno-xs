@@ -33,7 +33,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           path: "deno-xs"
-      - run: ls extensions -la
       - run: cp deno-xs/Cargo.toml Cargo.toml
       - run: cat Cargo.toml
       - name: Install latest Rust nightly
