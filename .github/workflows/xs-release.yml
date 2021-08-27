@@ -1,13 +1,14 @@
 # Build extra small Deno release
 
-name: xs-release ${{matrix.os}}
+name: xs-release
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ${{matrix.os}}
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 90
     strategy:
       matrix:
